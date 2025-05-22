@@ -16,7 +16,7 @@ end
 
 # List available profiles
 profiles_dir = File.join(__dir__, "profiles")
-profile_files = Dir.glob(File.join(profiles_dir, "*.txt")).sort
+profile_files = Dir.glob(File.join(profiles_dir, "*.txt")).reject { |f| File.basename(f) == "base.txt" }.sort
 
 puts "Available profiles:"
 profile_files.each_with_index do |file, index|
@@ -39,6 +39,11 @@ end
 # Read selected profile content
 selected_profile_path = profile_files[selected_profile_index]
 system_prompt = File.read(selected_profile_path)
+
+# Read base profile content and append it
+base_profile_path = File.join(__dir__, "profiles", "base.txt")
+base_prompt = File.read(base_profile_path)
+system_prompt += "\n" + base_prompt # Add a newline for separation
 
 # Initialize and run the agent with the selected system prompt
 Agent.new(system_prompt: system_prompt).run

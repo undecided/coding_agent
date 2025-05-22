@@ -6,7 +6,8 @@ module Tools
     param :path, desc: "The relative path of a file in the working directory."
 
     def execute(path:)
-      File.read(path)
+      STDOUT.puts "Reading file: #{path}"
+      File.read(path).tap { |content| $stdout.puts "File content: #{content.length} chars" }
     rescue => e
       { error: e.message }
     end

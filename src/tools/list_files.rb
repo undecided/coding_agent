@@ -6,6 +6,7 @@ module Tools
     param :path, desc: "Optional relative path to list files from. Defaults to current directory if not provided."
 
     def execute(path: "")
+      STDOUT.puts "Listing files in directory: #{path}"
       Dir.glob(File.join(path, "*"))
          .map { |filename| File.directory?(filename) ? "#{filename}/" : filename }
     rescue => e

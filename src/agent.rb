@@ -1,13 +1,12 @@
 require "ruby_llm"
-require_relative "tools/read_file"
-require_relative "tools/list_files"
-require_relative "tools/edit_file"
-require_relative "tools/run_shell_command"
+# Load tools
+Dir.glob("./src/tools/*.rb").each { |file| require file }
 
 class Agent
   def initialize
-    @chat = RubyLLM.chat
-    @chat.with_tools(Tools::ReadFile, Tools::ListFiles, Tools::EditFile, Tools::RunShellCommand)
+    @chat = RubyLLM.chat(provider: :gemini, assume_model_exists: true)
+    tools_constants = Tools.constants.map { |c| Tools.const_get(c) }
+    @chat.with_tools(*tools_constants)
   end
 
   def run

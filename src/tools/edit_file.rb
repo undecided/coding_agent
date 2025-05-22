@@ -15,6 +15,7 @@ module Tools
     param :new_str, desc: "Text to replace old_str with"
 
     def execute(path:, old_str:, new_str:)
+      STDOUT.puts "Editing file: #{path}"
       content = File.exist?(path) ? File.read(path) : ""
       File.write(path, content.sub(old_str, new_str))
     rescue => e

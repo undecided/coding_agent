@@ -10,8 +10,8 @@ require "ruby_llm"
 require_relative "src/agent"
 
 RubyLLM.configure do |config|
-  config.anthropic_api_key = ENV.fetch("ANTHROPIC_API_KEY", nil)
-  config.default_model = "claude-3-7-sonnet"
+  config.gemini_api_key = ENV.fetch("GEMINI_API_KEY", nil)
+  config.default_model = "gemini-2.5-flash-preview-04-17"
 end
 
 Agent.new.run

@@ -14,4 +14,32 @@ RubyLLM.configure do |config|
   config.default_model = "gemini-2.5-flash-preview-04-17"
 end
 
-Agent.new.run
+# List available profiles
+profiles_dir = File.join(__dir__, "profiles")
+profile_files = Dir.glob(File.join(profiles_dir, "*.txt")).sort
+
+puts "Available profiles:"
+profile_files.each_with_index do |file, index|
+  puts "#{index + 1}. #{File.basename(file, ".txt")}"
+end
+
+# Get user selection
+selected_profile_index = nil
+while selected_profile_index.nil?
+  print "Enter the number of the profile you want to use: "
+  input = gets.chomp
+  index = input.to_i - 1
+  if index >= 0 && index < profile_files.length
+    selected_profile_index = index
+  else
+    puts "Invalid selection. Please try again."
+  end
+end
+
+# Read selected profile content
+selected_profile_path = profile_files[selected_profile_index]
+system_prompt = File.read(selected_profile_path)
+
+# Initialize and run the agent with the selected system prompt
+Agent.new(system_prompt: system_prompt).run
+

@@ -6,9 +6,9 @@ module Tools
     param :url, desc: "The URL to read."
 
     def execute(url:)
-      output_file = "/tmp/extracted_text_#{SecureRandom.hex(6)}.txt"
       $stdout.puts "Reading webpage: #{url}"
-
+      tmp = ENV.fetch('TMPDIR', '/tmp')
+      output_file = "#{TMPDIR}/extracted_text_#{SecureRandom.hex(6)}.txt"
       $stdout.puts "Running command: lynx -dump #{url}"
       $stdout.puts "If this fails, make sure lynx is installed!"
       $stdout.puts File.write(output_file, `lynx -dump #{url}`)

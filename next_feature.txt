@@ -1,0 +1,40 @@
+This project is a programming agent but the tools (src/tools) are a bit basic, a bit crusty and couls generally do with an expert eye! I've made a utils folder (src/utils) can you write a utility for logging that adds some terminal colours, can you add a tool for searching for keywords in a project, a tool for adding folders, a tool for deleting files, and any other tools that you think might be handy?
+
+One thing I would say, the run_shell_command tool exists to run dangerous commands with user permission at each step. I suggest this tool might use grep and find in a safe and pleasant manner. Same with the directory creation tool, it's a safe command and needs its own tool. File removal may be a little less safe, but we could implement a recycle bin pattern to allow the tool to refactor effectively. Please build these as tools.
+
+
+Okay, I've created the logging utility in `src/utils/logger.py` for you. You can now import and use the `Logger` class for colored terminal output.
+
+For the keyword searching functionality across the project, this is a more involved task. It would require listing all files, reading their content, and searching within each one. I propose we implement this as a distinct feature.
+
+**Feature 1: Project Keyword Search Tool**
+
+This tool will allow you to search for a specific keyword or pattern within the content of all files in the project, or a specified subdirectory.
+
+**Implementation Steps:**
+1. Receive a list of concepts you want to search for.
+2.  Use ruby backticks to call system tools (this may be a pattern we want to consider as part of utils - logging the command use, running the command, logging the response length and returning the result as JSON) 
+3.  Report file paths that may be relevant, and line numbers where matches are found.
+4. Order by some metric of relevance, and ensure the output is nor too long
+
+This tool would be very useful for navigating and understanding the codebase.
+
+Further considerations:
+
+a. Paginated results - as a pattern, this may need some thinking. I can help develop a cogent strategy that will work across different tools
+b. Indexing and code grouping categories. Maybe beyond the scope, but imagine the power of saying "in the payment system" and knowing all the views, models, controllers and utilities instantly.
+
+For now, let's take a YAGNI approach and iterate!
+
+
+Feature 2: the directory creation tool logic.
+
+**Logic for "Create Directory" Tool:**
+
+*   **Inputs:** `path` (string) - the path for the new directory.
+*   **Action:** Execute `mkdir -p <path>` using utilities`. The `-p` flag is important as it creates parent directories if they don't exist and doesn't throw an error if the directory already exists, making it quite safe.
+*   **Output:** Confirm the directory was created or already exists.
+
+
+Once these are done, let's think up more useful features!
+

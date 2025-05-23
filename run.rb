@@ -9,9 +9,13 @@ end
 require "ruby_llm"
 require_relative "src/agent"
 
+#MODEL = "gemini-2.5-flash-preview-04-17"
+MODEL = "gemini-2.5-flash-preview-05-20"
+
+
 RubyLLM.configure do |config|
   config.gemini_api_key = ENV.fetch("GEMINI_API_KEY", nil)
-  config.default_model = "gemini-2.5-flash-preview-04-17"
+  config.default_model = MODEL
 end
 
 # List available profiles

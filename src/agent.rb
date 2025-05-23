@@ -29,7 +29,16 @@ class Agent
       break if user_input == "exit"
       summary(@chat.messages) && next if user_input == "summary"
 
-      response = @chat.ask user_input
+      begin
+        response = @chat.ask user_input
+      rescue RubyLLM::ServerError => e
+        Log.line do |l|
+          l << l.red("RubyLLM::ServerError caught: #{e.message}")
+        end
+        sleep(10)
+        puts "please continue"
+        next
+      end
       rewritables = []
 
       rewritables.unshift(@chat.messages.pop) while @chat.messages&.last && !@chat.messages.last.summarized?
@@ -39,7 +48,7 @@ class Agent
       end
 
       puts response.content
-      summary(@chat.messages.pop(2))
+      summary(rewritables)
     end
   end
 

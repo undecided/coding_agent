@@ -21,8 +21,8 @@ module Tools
       new_lines = new_str.lines
       removed = old_lines.size
       added = new_lines.size
-      removed_str = "#{Log::FAIL}-#{removed}#{Log::ENDC}"
-      added_str = "#{Log::OKGREEN}+#{added}#{Log::ENDC}"
+      removed_str = "#{Log.red("-#{removed}")}"
+      added_str = "#{Log.green("+#{added}")}"
       Log.info("Editing file: #{path} (lines #{removed_str} #{added_str})")
       content = File.exist?(path) ? File.read(path) : ""
       File.write(path, content.sub(old_str, new_str))

@@ -4,6 +4,11 @@ Dir.glob("./src/utils/*.rb").each { |file| require file }
 # Load tools
 Dir.glob("./src/tools/*.rb").each { |file| require file }
 
+class RubyLLM::Message
+  def summarized! ; @summarized = true ; self ; end
+  def summarized? ; @summarized ; end
+end
+
 class Agent
   def initialize(system_prompt: nil)
     @chat = RubyLLM.chat(provider: :gemini, assume_model_exists: true)
@@ -25,8 +30,12 @@ class Agent
       summary(@chat.messages) && next if user_input == "summary"
 
       response = @chat.ask user_input
-      rewrite_messages(@chat.messages.pop(2)).each do |m|
-        @chat.messages << m
+      rewritables = []
+
+      rewritables.unshift(@chat.messages.pop) while @chat.messages&.last && !@chat.messages.last.summarized?
+
+      rewrite_messages(rewritables).each do |m|
+        @chat.messages << m.summarized!
       end
 
       puts response.content

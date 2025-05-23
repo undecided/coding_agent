@@ -3,7 +3,7 @@ This project is a programming agent but the tools (src/tools) are a bit basic, a
 One thing I would say, the run_shell_command tool exists to run dangerous commands with user permission at each step. I suggest this tool might use grep and find in a safe and pleasant manner. Same with the directory creation tool, it's a safe command and needs its own tool. File removal may be a little less safe, but we could implement a recycle bin pattern to allow the tool to refactor effectively. Please build these as tools.
 
 
-Okay, I've created the logging utility in `src/utils/logger.py` for you. You can now import and use the `Logger` class for colored terminal output.
+Okay, I've created the logging utility in `src/utils/logger.rb` for you. You can now import and use the `Logger` class for colored terminal output.
 
 For the keyword searching functionality across the project, this is a more involved task. It would require listing all files, reading their content, and searching within each one. I propose we implement this as a distinct feature.
 
@@ -13,7 +13,7 @@ This tool will allow you to search for a specific keyword or pattern within the 
 
 **Implementation Steps:**
 1. Receive a list of concepts you want to search for.
-2.  Use ruby backticks to call system tools (this may be a pattern we want to consider as part of utils - logging the command use, running the command, logging the response length and returning the result as JSON) 
+2.  Use ruby backticks to call system tools (this may be a pattern we want to consider as part of utils - logging the command use, running the command, logging the response length and returning the result as JSON)
 3.  Report file paths that may be relevant, and line numbers where matches are found.
 4. Order by some metric of relevance, and ensure the output is nor too long
 

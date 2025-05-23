@@ -26,13 +26,17 @@ end
 # Get user selection
 selected_profile_index = nil
 while selected_profile_index.nil?
-  print "Enter the number of the profile you want to use: "
+  print "Enter the number of the profile you want to use (press Enter for default): "
   input = gets.chomp
-  index = input.to_i - 1
-  if index >= 0 && index < profile_files.length
-    selected_profile_index = index
+  if input.empty?
+    selected_profile_index = 0 # Default to the first profile
   else
-    puts "Invalid selection. Please try again."
+    index = input.to_i - 1
+    if index >= 0 && index < profile_files.length
+      selected_profile_index = index
+    else
+      puts "Invalid selection. Please try again."
+    end
   end
 end
 
@@ -44,6 +48,7 @@ system_prompt = File.read(selected_profile_path)
 base_profile_path = File.join(__dir__, "profiles", "base.txt")
 base_prompt = File.read(base_profile_path)
 system_prompt += "\n" + base_prompt # Add a newline for separation
+system_prompt += "Current date/time: #{Time.now.strftime("%Y-%m-%d %H:%M")}"
 
 # Initialize and run the agent with the selected system prompt
 Agent.new(system_prompt: system_prompt).run

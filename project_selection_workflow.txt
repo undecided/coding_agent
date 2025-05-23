@@ -1,0 +1,42 @@
+Interactive Project Selection Workflow:
+
+This document outlines the steps I would follow using the available tools to allow the user to select a project directory to work within, starting from the current working directory.
+
+1.  **Initial Directory Listing:**
+    -   Use the `list_files` tool with the path "." to list the contents of the current directory.
+    -   Present the list of files and directories to the user.
+
+2.  **Prompt for Project Selection/Navigation:**
+    -   Ask the user to specify which directory they want to work in.
+    -   Provide options:
+        -   Select a subdirectory listed.
+        -   Go up to the parent directory using "..".
+        -   Confirm the current directory "." if it appears to be a project root.
+
+3.  **Process User Input:**
+    -   Read the user's input.
+
+4.  **Navigate and List New Directory:**
+    -   Based on the user's input (subdirectory name, ".", or ".."), update the current working path internally.
+    -   Use the `list_files` tool with the new path to list its contents.
+    -   Present the new list of files and directories to the user.
+
+5.  **Analyze Directory Contents (Heuristic):**
+    -   Examine the listed files and directories for common project indicators (e.g., `package.json`, `Gemfile`, `pom.xml`, `setup.py`, `Dockerfile`, `src/`, `test/`, build scripts).
+    -   Based on the analysis, attempt to determine if the current directory:
+        -   Looks like the root of a single project.
+        -   Looks like a directory containing multiple sub-projects (e.g., many subdirectories each with project indicators).
+        -   Is just a regular directory.
+
+6.  **Clarification/Confirmation (if necessary):**
+    -   If the analysis is ambiguous or suggests a directory of multiple projects, ask the user for clarification:
+        -   Confirm if this is the correct project root.
+        -   If it appears to contain multiple projects, ask the user to select a specific sub-project directory from the list.
+
+7.  **Set Working Context:**
+    -   Once a single project directory is confirmed, all subsequent file operations (`read_file`, `edit_file`) and shell commands (`run_shell_command`) will be interpreted relative to this selected project path.
+
+8.  **Looping:**
+    -   Steps 4-6 can be repeated, allowing the user to navigate up or down the directory tree until the desired project directory is located and confirmed.
+
+This interactive process, managed through dialogue and repeated tool calls, allows navigation and selection without modifying the core application's startup logic.

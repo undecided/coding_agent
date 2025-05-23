@@ -1,4 +1,6 @@
 require "ruby_llm/tool"
+require_relative "../utils/log"
+require_relative "../utils/report_tok_count"
 
 module Tools
   class EditFile < RubyLLM::Tool
@@ -15,11 +17,21 @@ module Tools
     param :new_str, desc: "Text to replace old_str with"
 
     def execute(path:, old_str:, new_str:)
-      STDOUT.puts "Editing file: #{path}"
+      old_lines = old_str.lines
+      new_lines = new_str.lines
+      removed = old_lines.size
+      added = new_lines.size
+      removed_str = "#{Log::FAIL}-#{removed}#{Log::ENDC}"
+      added_str = "#{Log::OKGREEN}+#{added}#{Log::ENDC}"
+      Log.info("Editing file: #{path} (lines #{removed_str} #{added_str})")
       content = File.exist?(path) ? File.read(path) : ""
       File.write(path, content.sub(old_str, new_str))
+      result = { success: true, message: "Edited file: #{path}" }
+      Log.success("Edit complete for file: #{path}")
+      Utils::ReportTokCount.report_tok_count(result)
     rescue => e
-      { error: e.message }
+      Log.error(e.message)
+      Utils::ReportTokCount.report_tok_count({ error: e.message })
     end
   end
 end

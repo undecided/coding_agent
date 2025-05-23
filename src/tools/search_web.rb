@@ -1,5 +1,7 @@
 require "ruby_llm/tool"
 require "duckduckgo"
+require_relative "../utils/log"
+require_relative "../utils/report_tok_count"
 
 module Tools
   class SearchWeb < RubyLLM::Tool
@@ -7,7 +9,7 @@ module Tools
     param :query, desc: "The search query string."
 
     def execute(query:)
-      STDOUT.puts "Searching the web for: #{query}"
+      Log.info("Searching the web for: #{query}")
       results = DuckDuckGo::search(:query => query)
 
       # Format the results
@@ -18,10 +20,11 @@ module Tools
           description: result.description
         }
       end
-
-      formatted_results
+      Log.success("Found #{formatted_results.size} results for query: #{query}")
+      Utils::ReportTokCount.report_tok_count(formatted_results)
     rescue => e
-      { error: e.message }
+      Log.error(e.message)
+      Utils::ReportTokCount.report_tok_count({ error: e.message })
     end
   end
 end

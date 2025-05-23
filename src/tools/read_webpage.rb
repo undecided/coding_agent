@@ -1,4 +1,6 @@
 require "ruby_llm/tool"
+require_relative "../utils/log"
+require_relative "../utils/report_tok_count"
 
 module Tools
   class ReadWebpage < RubyLLM::Tool
@@ -6,18 +8,21 @@ module Tools
     param :url, desc: "The URL to read."
 
     def execute(url:)
-      $stdout.puts "Reading webpage: #{url}"
+      Log.info("Reading webpage: #{url}")
       tmp = ENV.fetch('TMPDIR', '/tmp')
-      output_file = "#{TMPDIR}/extracted_text_#{SecureRandom.hex(6)}.txt"
-      $stdout.puts "Running command: lynx -dump #{url}"
-      $stdout.puts "If this fails, make sure lynx is installed!"
-      $stdout.puts File.write(output_file, `lynx -dump #{url}`)
-      $stdout.puts "Read webpage: #{url}, filesize: #{File.size(output_file)} bytes"
+      output_file = "#{tmp}/extracted_text_#{SecureRandom.hex(6)}.txt"
+      Log.info("Running command: lynx -dump #{url}")
+      Log.info("If this fails, make sure lynx is installed!")
+      File.write(output_file, `lynx -dump #{url}`)
+      Log.success("Read webpage: #{url}, filesize: #{File.size(output_file)} bytes")
 
       if $?.success?
-        { success: true, message: "Text extracted and saved to: #{output_file}" }
+        result = { success: true, message: "Text extracted and saved to: #{output_file}" }
+        Log.success("Text extracted and saved to: #{output_file}")
+        Utils::ReportTokCount.report_tok_count(result)
       else
-        { error: "Error fetching or processing URL: #{url}" }
+        Log.error("Error fetching or processing URL: #{url}")
+        Utils::ReportTokCount.report_tok_count({ error: "Error fetching or processing URL: #{url}" })
       end
     end
   end

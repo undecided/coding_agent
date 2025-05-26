@@ -6,11 +6,16 @@ Dir.chdir(__dir__) do
   require "dotenv/load"
 end
 
+# Load tools
+Dir.glob("./src/tools/*.rb").each { |file| require file }
+
 require "ruby_llm"
 require_relative "src/agent"
 
-#MODEL = "gemini-2.5-flash-preview-04-17"
-MODEL = "gemini-2.5-flash-preview-05-20"
+MODEL = Loopy.new
+MODEL.add [:gemini, "gemini-2.5-flash-preview-04-17"]
+MODEL.add [:gemini, "gemini-2.5-flash-preview-05-20"]
+MODEL.add [:gemini, "gemma-3-27b-it"]
 
 
 RubyLLM.configure do |config|

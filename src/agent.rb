@@ -1,8 +1,6 @@
 require "ruby_llm"
 # Load utils
 Dir.glob("./src/utils/*.rb").each { |file| require file }
-# Load tools
-Dir.glob("./src/tools/*.rb").each { |file| require file }
 
 class RubyLLM::Message
   def summarized! ; @summarized = true ; self ; end
@@ -11,7 +9,7 @@ end
 
 class Agent
   def initialize(system_prompt: nil)
-    @chat = RubyLLM.chat(provider: :gemini, assume_model_exists: true)
+    @chat = RubyLLM.chat(model: MODEL.object.last, provider: MODEL.object.first, assume_model_exists: true)
     @chat.with_instructions system_prompt
     tools_constants = Tools.constants.map { |c| Tools.const_get(c) }
     @chat.with_tools(*tools_constants)
@@ -30,12 +28,14 @@ class Agent
       summary(@chat.messages) && next if user_input == "summary"
 
       begin
+        @chat.with_model(MODEL.object.last, provider: MODEL.object.first, assume_exists: true)
         response = @chat.ask user_input
       rescue RubyLLM::ServerError => e
         Log.line do |l|
           l << l.red("RubyLLM::ServerError caught: #{e.message}")
         end
         sleep(10)
+        MODEL.rotate
         puts "please continue"
         next
       end
@@ -54,6 +54,7 @@ class Agent
 
   def rewrite_messages(q_and_a_arr)
     rewriter = new_rewriter
+    rewriter.with_model(MODEL.object.last, provider: MODEL.object.first, assume_exists: true)
     q_and_a_arr
       .map { |m| [m, rewriter.ask("Summarize the following interaction from #{m.role} in as few words as possible:\nINTERACTION_START\n#{m.content}\nINTERACTION_END")]}
       .map { |(m, reworked)| RubyLLM::Message.new(m.to_h.merge(reworked.to_h.slice(:content, :input_tokens, :output_tokens))) }

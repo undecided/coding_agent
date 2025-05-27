@@ -30,7 +30,7 @@ class Agent
       begin
         @chat.with_model(MODEL.object.last, provider: MODEL.object.first, assume_exists: true)
         response = @chat.ask user_input
-      rescue RubyLLM::ServerError => e
+      rescue RubyLLM::ServerError, RubyLLM::RateLimitError  => e
         Log.line do |l|
           l << l.red("RubyLLM::ServerError caught: #{e.message}")
         end
